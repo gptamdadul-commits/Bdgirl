@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Hy baby  -   </title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Monetag SDK -->
+    <script src='//libtl.com/sdk.js' data-zone='10404257' data-sdk='show_10404257'></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;600;700&display=swap');
+        body { font-family: 'Hind Siliguri', sans-serif; background-color: #0d0d0d; color: white; overflow: hidden; -webkit-tap-highlight-color: transparent; }
+        .baby-gradient { background: linear-gradient(135deg, #ff0055 0%, #a80038 100%); }
+        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); }
+        .msg-bot { background: #1a1a1a; border-radius: 20px 20px 20px 5px; border: 1px solid rgba(255,255,255,0.05); }
+        .msg-user { background: #ff0055; border-radius: 20px 20px 5px 20px; box-shadow: 0 4px 15px rgba(255,0,85,0.3); }
+        .online-glow { width: 12px; height: 12px; background-color: #00ff88; border-radius: 50%; display: inline-block; position: relative; }
+        .online-glow::after { content: ''; width: 100%; height: 100%; background-color: #00ff88; border-radius: 50%; position: absolute; animation: pulse 2s infinite; opacity: 0.8; }
+        @keyframes pulse { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(3.5); opacity: 0; } }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .animate-in { animation: fadeInUp 0.3s ease-out; }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col">
+
+    <div id="main-app" class="max-w-md mx-auto w-full h-full flex flex-col relative bg-[#0d0d0d] shadow-2xl">
+        
+        <!-- Header -->
+        <header class="p-4 flex justify-between items-center border-b border-white/5 bg-[#0d0d0d]/90 backdrop-blur-md z-[100]">
+            <div class="flex items-center gap-2">
+                <div class="baby-gradient p-2 rounded-2xl shadow-lg shadow-pink-600/30">
+                    <i class="fas fa-kiss-wink-heart text-white text-xl"></i>
+                </div>
+                <h1 class="font-bold text-2xl tracking-tighter text-pink-500 italic">Hy baby </h1>
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="bg-white/5 border border-white/10 px-4 py-1.5 rounded-full flex items-center gap-2">
+                    <i class="fas fa-bolt text-yellow-400"></i>
+                    <span id="token-count" class="font-bold text-sm">5</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Discovery Content -->
+        <div id="screen-container" class="flex-1 overflow-y-auto scrollbar-hide pb-20">
+            <div id="discover-screen" class="p-4 space-y-6">
+                <!-- Ad Recharge Card -->
+                <div class="glass p-6 rounded-[40px] border-pink-500/30 flex flex-col items-center text-center gap-4 bg-gradient-to-br from-pink-500/10 to-transparent">
+                    <div class="w-16 h-16 bg-pink-500/20 rounded-full flex items-center justify-center">
+                        <i class="fas fa-video text-pink-500 text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-xl text-white">   ?</h3>
+                        <p class="text-xs text-gray-400">     </p>
+                    </div>
+                    <button onclick="earnTokensAd()" class="w-full baby-gradient py-4 rounded-3xl font-bold text-sm shadow-xl active:scale-95 transition">
+                           
+                    </button>
+                </div>
+
+                <div class="px-2"><h2 class="text-gray-500 font-bold uppercase text-[10px] tracking-[0.3em]">  </h2></div>
+                <div id="char-grid" class="space-y-8"></div>
+            </div>
+
+            <!-- Chat Interface -->
+            <div id="chat-screen" class="hidden fixed inset-0 z-[150] bg-[#080808] flex flex-col max-w-md mx-auto">
+                <div class="p-4 border-b border-white/5 flex items-center gap-4 bg-[#0d0d0d]">
+                    <button onclick="closeChat()" class="text-gray-400 p-2"><i class="fas fa-arrow-left text-xl"></i></button>
+                    <div class="relative">
+                        <img id="active-pfp" src="" class="w-12 h-12 rounded-full object-cover border-2 border-pink-500">
+                        <div class="absolute bottom-0 right-0 online-glow border-2 border-[#0d0d0d]"></div>
+                    </div>
+                    <div>
+                        <h3 id="active-name" class="font-bold text-lg leading-none"></h3>
+                        <span class="text-[10px] text-green-400 font-bold mt-1 block tracking-[0.2em] uppercase"></span>
+                    </div>
+                </div>
+                <div id="msg-area" class="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-hide"></div>
+                <div class="p-6 bg-[#0d0d0d] border-t border-white/5 pb-12">
+                    <div class="text-center text-[10px] text-gray-500 mb-3 font-bold uppercase tracking-widest"> <span id="token-left" class="text-pink-500">0</span>   </div>
+                    <div class="flex gap-2">
+                        <input id="chat-input" type="text" placeholder="   ..." class="flex-1 bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm text-white focus:outline-none focus:border-pink-500" onkeypress="handleKeyPress(event)">
+                        <button onclick="sendUserMsg()" class="baby-gradient w-14 h-14 rounded-2xl flex shadow-lg active:scale-90 transition items-center justify-center"><i class="fas fa-paper-plane text-xl"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ad Loading -->
+        <div id="ad-gate" class="hidden fixed inset-0 z-[1000] bg-black/98 backdrop-blur-2xl flex flex-col items-center justify-center text-center p-10">
+            <div class="relative">
+                <div class="w-24 h-24 border-4 border-pink-600 border-t-transparent rounded-full animate-spin"></div>
+            </div>
+            <h2 class="text-2xl font-bold mt-8 mb-2 text-pink-500">Hy baby... </h2>
+            <p class="text-gray-400 text-sm">     </p>
+        </div>
+
+        <!-- Error Toast -->
+        <div id="error-toast" class="hidden fixed bottom-24 left-1/2 transform -translate-x-1/2 bg-red-600/90 text-white px-6 py-3 rounded-2xl text-sm font-bold backdrop-blur-md z-[2000]">
+            <i class="fas fa-exclamation-circle mr-2"></i><span id="error-text"></span>
+        </div>
+    </div>
+
+    <script>
+        const characters = [
+            { id: 1, name: "", age: 23, bio: "  ,    ?", img: "https://i.postimg.cc/VsRbq9Lk/IMG-20260101-215226-892.jpg", personality: "bold and direct" },
+            { id: 2, name: "", age: 22, bio: "        ?", img: "https://i.postimg.cc/J4Mvg8LY/IMG-20260101-215247-171.jpg", personality: "naughty and playful" },
+            { id: 3, name: "", age: 24, bio: "      ", img: "https://i.postimg.cc/tTdDt1YT/IMG-20260101-215333-171.jpg", personality: "very romantic and provocative" },
+            { id: 4, name: "", age: 25, bio: "     ?", img: "https://i.postimg.cc/zBkSH9ch/IMG-20260101-215613-357.jpg", personality: "wild and adventurous" },
+            { id: 5, name: "", age: 21, bio: "      !", img: "https://i.postimg.cc/hv5m9gbm/IMG-20260101-215502-345.jpg", personality: "sweet but seductive" },
+            { id: 6, name: "", age: 23, bio: "     ", img: "https://i.postimg.cc/3Nd4rV5W/IMG-20260101-215421-605.jpg", personality: "intellectual and bold" },
+            { id: 7, name: "", age: 24, bio: "   ,   ", img: "https://i.postimg.cc/W163VTFn/IMG-20260101-215410-336.jpg", personality: "straightforward and bold" },
+            { id: 8, name: "", age: 22, bio: "   ,   !", img: "https://i.postimg.cc/T2D5S89s/IMG-20260101-215359-954.jpg", personality: "charming and provocative" }
+        ];
+
+        let tokens = parseInt(localStorage.getItem('hy_baby_tokens')) || 5;
+        let selectedChar = null;
+
+        window.onload = () => {
+            updateTokenUI();
+            renderCharacters();
+            if(window.show_10404257) {
+                show_10404257({ type: 'inApp', inAppSettings: { frequency: 2, capping: 0.1, interval: 30, timeout: 5, everyPage: false } });
+            }
+        };
+
+        function updateTokenUI() {
+            document.getElementById('token-count').innerText = tokens;
+            document.getElementById('token-left').innerText = tokens;
+            localStorage.setItem('hy_baby_tokens', tokens);
+        }
+
+        function renderCharacters() {
+            const grid = document.getElementById('char-grid');
+            grid.innerHTML = characters.map(c => `
+                <div class="relative h-[500px] rounded-[50px] overflow-hidden shadow-2xl active:scale-[0.98] transition-all duration-300" onclick="startChatFlow(${c.id})">
+                    <img src="${c.img}" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/10 to-transparent p-10 flex flex-col justify-end">
+                        <div class="flex items-center gap-3 mb-2"><h3 class="text-3xl font-bold text-white">${c.name}, ${c.age}</h3><div class="online-glow"></div></div>
+                        <p class="text-gray-300 text-sm line-clamp-2 mb-6 opacity-80">${c.bio}</p>
+                        <button class="w-full baby-gradient py-4 rounded-3xl font-bold text-lg shadow-2xl">   </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function earnTokensAd() {
+            if(!window.show_10404257) {
+                showError('      ');
+                return;
+            }
+            document.getElementById('ad-gate').classList.remove('hidden');
+            show_10404257('pop').then(() => { 
+                tokens += 5; 
+                updateTokenUI(); 
+                document.getElementById('ad-gate').classList.add('hidden');
+                showSuccess('   !');
+            }).catch(() => {
+                document.getElementById('ad-gate').classList.add('hidden');
+                showError('     ');
+            });
+        }
+
+        function startChatFlow(id) {
+            selectedChar = characters.find(c => c.id === id);
+            document.getElementById('ad-gate').classList.remove('hidden');
+            const start = () => { 
+                document.getElementById('ad-gate').classList.add('hidden'); 
+                openChat(); 
+            };
+            if(window.show_10404257) {
+                show_10404257().then(start).catch(start);
+            } else {
+                start();
+            }
+        }
+
+        function openChat() {
+            document.getElementById('chat-screen').classList.remove('hidden');
+            document.getElementById('active-name').innerText = selectedChar.name;
+            document.getElementById('active-pfp').src = selectedChar.img;
+            document.getElementById('msg-area').innerHTML = '';
+            addMessage('bot', ` !  ${selectedChar.name}     ...   ? `);
+        }
+
+        function closeChat() { 
+            document.getElementById('chat-screen').classList.add('hidden'); 
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendUserMsg();
+            }
+        }
+
+        async function sendUserMsg() {
+            const input = document.getElementById('chat-input');
+            const msg = input.value.trim();
+            
+            if(!msg) {
+                showError('    !');
+                return;
+            }
+            
+            if(tokens <= 0) {
+                showRecharge();
+                showError(' !    ');
+                return;
+            }
+            
+            addMessage('user', msg);
+            input.value = '';
+            tokens--;
+            updateTokenUI();
+            
+            const loaderId = addMessage('bot', ' ...');
+            
+            try {
+                const response = await fetch('/.netlify/functions/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        message: msg, 
+                        personality: selectedChar.personality, 
+                        name: selectedChar.name 
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                document.getElementById(loaderId).remove();
+                
+                if(data.isBusy) {
+                    addMessage('bot', ",          ? ");
+                    showBusySwap();
+                } else if(data.reply) {
+                    addMessage('bot', data.reply);
+                } else {
+                    addMessage('bot', "  ,    ! ");
+                }
+                
+                if(tokens === 0) {
+                    showRecharge();
+                }
+                
+            } catch (error) {
+                console.error('Error sending message:', error);
+                document.getElementById(loaderId).remove();
+                addMessage('bot', "       ? ");
+                
+                // Fallback response
+                const fallbackResponses = [
+                    " !      ",
+                    "  ?       ",
+                    "   ?   ",
+                    "      ",
+                    "    ... "
+                ];
+                const randomResponse = fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
+                addMessage('bot', randomResponse);
+            }
+        }
+
+        function showRecharge() {
+            const div = document.createElement('div');
+            div.className = "w-full p-8 glass rounded-[40px] border-pink-500/30 text-center animate-bounce mt-6";
+            div.innerHTML = `
+                <p class="text-sm font-bold mb-4 text-pink-300 italic">"  !  "</p>
+                <button onclick="rechargeAd(this)" class="w-full baby-gradient py-4 rounded-3xl font-bold">
+                       
+                </button>
+            `;
+            document.getElementById('msg-area').appendChild(div);
+            document.getElementById('msg-area').scrollTop = document.getElementById('msg-area').scrollHeight;
+        }
+
+        function rechargeAd(btn) {
+            document.getElementById('ad-gate').classList.remove('hidden');
+            if(window.show_10404257) {
+                show_10404257('pop').then(() => { 
+                    tokens += 5; 
+                    updateTokenUI(); 
+                    btn.parentElement.remove(); 
+                    document.getElementById('ad-gate').classList.add('hidden');
+                    showSuccess('   !');
+                }).catch(() => {
+                    document.getElementById('ad-gate').classList.add('hidden');
+                    showError('  ');
+                });
+            } else {
+                document.getElementById('ad-gate').classList.add('hidden');
+                showError('   ');
+            }
+        }
+
+        function showBusySwap() {
+            const btn = document.createElement('button');
+            btn.className = "w-full bg-blue-600/50 p-4 rounded-3xl font-bold mt-4 active:scale-95 transition";
+            btn.innerHTML = "    ";
+            btn.onclick = () => { 
+                document.getElementById('ad-gate').classList.remove('hidden'); 
+                if(window.show_10404257) {
+                    show_10404257().then(() => { 
+                        document.getElementById('ad-gate').classList.add('hidden'); 
+                        closeChat(); 
+                    }).catch(() => {
+                        document.getElementById('ad-gate').classList.add('hidden'); 
+                        closeChat();
+                    });
+                } else {
+                    document.getElementById('ad-gate').classList.add('hidden');
+                    closeChat();
+                }
+            };
+            document.getElementById('msg-area').appendChild(btn);
+        }
+
+        function addMessage(type, txt) {
+            const box = document.getElementById('msg-area');
+            const div = document.createElement('div');
+            const id = 'm-' + Date.now() + Math.random();
+            div.id = id;
+            div.className = `flex ${type === 'user' ? 'justify-end' : 'justify-start'} animate-in`;
+            div.innerHTML = `<div class="max-w-[85%] px-6 py-4 text-sm ${type === 'user' ? 'msg-user' : 'msg-bot'}">${txt}</div>`;
+            box.appendChild(div);
+            box.scrollTop = box.scrollHeight;
+            return id;
+        }
+
+        function showError(message) {
+            const toast = document.getElementById('error-toast');
+            document.getElementById('error-text').textContent = message;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+
+        function showSuccess(message) {
+            // Create success toast
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-24 left-1/2 transform -translate-x-1/2 bg-green-600/90 text-white px-6 py-3 rounded-2xl text-sm font-bold backdrop-blur-md z-[2000] animate-in';
+            toast.innerHTML = `<i class="fas fa-check-circle mr-2"></i>${message}`;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.remove();
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
